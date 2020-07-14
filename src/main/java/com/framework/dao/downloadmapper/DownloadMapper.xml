@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.downloadmapper.DownloadMapper">
+
+    <resultMap id="downloadMap" type="com.framework.entity.Download">
+        <id column="download_id" property="downloadId"/>
+        <result column="download_time" property="downloadTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="resource_id" property="resourceId"/>
+    </resultMap>
+    <!--查询某个帖子是否已被某用户下载-->
+    <select id="userAleadyDownload" resultType="int">
+        SELECT
+        count(*)
+        FROM
+       `download`
+       WHERE
+       user_id=#{userId}
+       AND
+       resource_id=#{resourceId}
+    </select>
+    <!--插入记录-->
+    <!-- 插入 -->
+    <insert id="insert">
+        INSERT INTO download
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId!=null">user_id,</if>
+            <if test="resourceId!=null">resource_id,</if>
+            <if test="downloadTime!=null">download_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId!=null">#{userId},</if>
+            <if test="resourceId!=null">#{resourceId},</if>
+            <if test="downloadTime!=null">#{downloadTime},</if>
+        </trim>
+    </insert>
+
+<!---->
+    <delete id="deleteByForeignKey">
+        DELETE FROM
+        `download`
+        WHERE
+        resource_id
+        IN
+        <foreach collection="idArray" item="item" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

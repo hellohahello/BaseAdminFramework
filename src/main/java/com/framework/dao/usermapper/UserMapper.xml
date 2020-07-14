@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.usermapper.UserMapper">
+    <resultMap id="userMap" type="com.framework.entity.User">
+        <id column="user_id" property="userId"/>
+        <result column="open_id" property="openId"/>
+        <result column="user_name" property="userName"/>
+        <result column="pass_word" property="passWord"/>
+        <result column="nickname" property="nickname"/>
+        <result column="sex" property="sex"/>
+        <result column="email" property="email"/>
+        <result column="its_vip" property="itsVip"/>
+        <result column="vip_grade" property="vipGrade"/>
+        <result column="points" property="points"/>
+        <result column="its_off" property="itsOff"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="role_name" property="roleName"/>
+        <result column="avatar" property="avatar"/>
+    </resultMap>
+<select id="findByUserNameAndPassword" resultMap="userMap">
+    select * from user
+    where
+    user_name=#{userName}
+    AND
+    pass_word=#{passWord};
+</select>
+    <select id="findByEmail" resultMap="userMap">
+        SELECT
+        *
+        from
+        user
+        WHERE
+        email=#{email}
+    </select>
+    <!--忘记密码.更新密码-->
+    <update id="updatePassword">
+        update  user
+        set
+        pass_word=#{newPassWord}
+        where
+        email=#{emailInfo}
+    </update>
+    <!--注册或更新用户信息-->
+    <insert id="insertUser">
+            INSERT INTO `user`
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="nickname!=null">nickname,</if>
+                <if test="userName!=null">user_name,</if>
+                <if test="passWord!=null">pass_word,</if>
+                <if test="email!=null">email,</if>
+                <if test="avatar!=null">avatar,</if>
+                <if test="sex!=null">sex,</if>
+                <if test="points!=null">points,</if>
+                <if test="itsVip!=null">its_vip,</if>
+                <if test="vipGrade!=null">vip_grade,</if>
+                <if test="itsOff!=null">its_off,</if>
+                <if test="roleName!=null">role_name,</if>
+                <if test="registerTime!=null">register_time,</if>
+                <if test="lastLoginTime!=null">last_login_time,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="nickname!=null">#{nickname},</if>
+                <if test="userName!=null">#{userName},</if>
+                <if test="passWord!=null">#{passWord},</if>
+                <if test="email!=null">#{email},</if>
+                <if test="avatar!=null">#{avatar},</if>
+                <if test="sex!=null">#{sex},</if>
+                <if test="points!=null">#{points},</if>
+                <if test="itsVip!=null">#{itsVip},</if>
+                <if test="vipGrade!=null">#{vipGrade},</if>
+                <if test="itsOff!=null">#{itsOff},</if>
+                <if test="roleName!=null">#{roleName},</if>
+                <if test="registerTime!=null">#{registerTime},</if>
+                <if test="lastLoginTime!=null">#{lastLoginTime},</if>
+            </trim>
+
+    </insert>
+    <!--更新用户最后登录时间-->
+    <update id="updateLoginTime">
+        UPDATE user
+        SET
+        last_login_time=#{lastLoginTime}
+        WHERE
+        user_id=#{userId}
+    </update>
+    <select id="findById" resultMap="userMap">
+        select
+        *
+        from
+        `user`
+        WHERE
+        user_id=#{userId}
+    </select>
+    <!--更新积分-->
+    <update id="updatePoints">
+        UPDATE
+        `user`
+        SET
+        points=#{points}
+        WHERE
+        user_id=#{userId}
+    </update>
+    <!--更新角色-->
+    <update id="updateRoleName">
+        UPDATE
+        `user`
+        SET
+        role_name=#{roleName}
+        WHERE
+        user_id=#{userId}
+    </update>
+    <!--查询今日新增用户数-->
+    <select id="todayNewAddUserCount" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        `user`
+        WHERE
+        TO_DAYS(register_time)=TO_DAYS(NOW())
+    </select>
+    <!--用户列表-->
+    <select id="list" resultMap="userMap">
+        SELECT
+        user_id,
+        user_name,
+        nickname,
+        pass_word,
+        email,
+        points,
+        avatar,
+        sex,
+        its_vip,
+        vip_grade,
+        its_off,
+        DATE_FORMAT(register_time, '%Y-%m-%d %H:%i:%s') as  register_time,
+        DATE_FORMAT(last_login_time, '%Y-%m-%d %H:%i:%s') as last_login_time,
+        role_name
+        FROM
+        `user`
+    </select>
+    <!--设置指定用户为vip-->
+    <update id="setVip">
+        UPDATE
+        `user`
+        SET
+        its_vip=1,
+        vip_grade=1
+        WHERE
+        user_id=#{userId}
+    </update>
+    <!--取消vip-->
+    <update id="setNoVip">
+        UPDATE
+        `user`
+        SET
+        its_vip=0
+        WHERE
+        user_id=#{userId}
+    </update>
+    <!--封禁用户-->
+    <update id="offUserById">
+         UPDATE
+        `user`
+        SET
+        its_off=1
+        WHERE
+        user_id=#{userId}
+    </update>
+    <!--取消封禁用户-->
+    <update id="noOffUserById">
+        UPDATE
+        `user`
+        SET
+        its_off=0
+        WHERE
+        user_id=#{userId}
+    </update>
+
+    <update id="updateAvatar">
+        update `user` set avatar =#{base64Image}
+         WHERE
+         user_id=#{userId};
+    </update>
+</mapper>

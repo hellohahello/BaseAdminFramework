@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 引入分页插件 -->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 分页参数合理化，建议设置false（即：当总页数为10页时，请求参数为第11页时，不返回数据，为true时，返回最后一页的数据） -->
+            <property name="reasonable" value="false"/>
+        </plugin>
+    </plugins>
+</configuration>

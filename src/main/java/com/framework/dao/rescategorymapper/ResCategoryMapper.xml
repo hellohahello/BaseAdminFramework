@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.rescategorymapper.ResCategoryMapper">
+    <resultMap id="categoryMap" type="com.framework.entity.ResCategory">
+        <id column="res_category_id" property="resCategoryId"/>
+        <result column="sort" property="sort"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    <select id="list" resultMap="categoryMap">
+SELECT
+*
+FROM
+res_category
+ORDER BY
+sort
+</select>
+
+    <!-- 插入一条新的数据 -->
+    <insert id="insert">
+        INSERT INTO res_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName!=null and categoryName!=''">category_name,</if>
+            <if test="sort!=null and sort!=''">sort,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName!=null">#{categoryName},</if>
+            <if test="sort!=null">#{sort},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 更新一条数据 -->
+    <update id="update">
+        UPDATE res_category
+        <set>
+            <if test="sort!=null and sort!=''">sort=#{sort},</if>
+            <if test="categoryName!=null and categoryName!=''">category_name=#{categoryName},</if>
+        </set>
+        WHERE res_category_id = #{resCategoryId}
+    </update>
+    <delete id="delete">
+        DELETE
+        FROM
+        res_category
+        WHERE
+        res_category_id
+        IN
+        <foreach collection="idArr" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

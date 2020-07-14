@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.commentmapper.CommentMapper">
+    <resultMap id="commentMap" type="com.framework.entity.Comment">
+        <id column="comment_id" property="commentId"/>
+        <result column="user_id" property="userId"/>
+        <result column="resource_id" property="resourceId"/>
+        <result column="content" property="content"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="status" property="status"/>
+        <result column="to_uid" property="toUid"/>
+        <!--评论的发布者-->
+        <result column="user_name" property="commentOwnName"/>
+        <result column="avatar" property="avatar"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="to_user_name" property="toUserName"/>
+        <result column="reply_user_name" property="replyUserName"/>
+        <result column="avatar" property="avatar"/>
+        <result column="resource_name" property="resourceName"/>
+
+    </resultMap>
+    <!--评论列表-->
+    <select id="list" resultMap="commentMap">
+        SELECT
+        c.comment_id,
+        c.parent_id,
+        c.to_uid,
+        c.user_id,
+        c.resource_id,
+        c.content,
+        c.avatar,
+        c.comment_time,
+        c.to_user_name,
+        c.reply_user_name,
+        r.resource_id ,
+        r.resource_name,
+
+        u.user_id ,
+        u.user_name ,
+        u.avatar
+        FROM
+        comment c,
+        resource r,
+        `user` u
+        WHERE
+        c.user_id = u.user_id
+        AND c.resource_id = r.resource_id
+        <if test="resourceId!=null and resourceId != ''">
+            AND
+            r.resource_id=#{resourceId}
+        </if>
+        ORDER BY
+        c.comment_time
+
+
+    </select>
+
+    <!--评论数-->
+    <select id="commentCount" resultType="int">
+        SELECT COUNT(*) FROM comment
+    </select>
+
+    <!--保存评论-->
+    <insert id="save">
+        INSERT INTO comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content!=null">content,</if>
+            <if test="commentTime!=null">comment_time,</if>
+            <if test="userId!=null">user_id,</if>
+            <if test="toUid!=null">to_uid,</if>
+            <if test="status!=null">status,</if>
+            <if test="resourceId!=null">resource_id,</if>
+            <if test="parentId!=null">parent_id,</if>
+            <if test="toUserName!=null">to_user_name,</if>
+            <if test="replyUserName!=null">reply_user_name,</if>
+            <if test="avatar!=null">avatar,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content!=null">#{content},</if>
+            <if test="commentTime!=null">#{commentTime},</if>
+            <if test="userId!=null">#{userId},</if>
+            <if test="toUid!=null">#{toUid},</if>
+            <if test="status!=null">#{status},</if>
+            <if test="resourceId!=null">#{resourceId},</if>
+            <if test="parentId!=null">#{parentId},</if>
+            <if test="toUserName!=null">#{toUserName},</if>
+            <if test="replyUserName!=null">#{replyUserName},</if>
+            <if test="avatar!=null">#{avatar},</if>
+
+        </trim>
+    </insert>
+    <!--更新评论用户的头像-->
+    <update id="update">
+        UPDATE
+        comment
+        SET
+        avatar=#{avatar}
+        WHERE
+        comment_id=#{commentId}
+    </update>
+    <select id="findById" resultMap="commentMap">
+        SELECT
+        *
+        FROM
+        comment
+        WHERE
+        comment_id=#{commentId}
+    </select>
+
+    <!--删除评论-->
+    <delete id="delete">
+        DELETE FROM comment WHERE comment_id IN
+        <foreach collection="idArray" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!--根据父评论id查找旗下子评论-->
+    <select id="finsSonCommentById" resultMap="commentMap">
+        SELECT comment_id FROM
+        comment
+        WHERE
+        parent_id=#{commentId}
+    </select>
+    <!--今日新增评论数-->
+    <select id="todayNewAddCommentCount" resultType="int">
+    SELECT
+    count(*)
+    FROM
+    comment
+    WHERE
+    to_days(comment_time)=to_days(now())
+    </select>
+    <!--删除帖子的同时删除旗下的评论-->
+    <delete id="deleteByForeignKey">
+        DELETE FROM comment
+        WHERE
+        resource_id
+        IN
+        <foreach collection="idArray" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </delete>
+    <select id="findByUserId" resultMap="commentMap">
+        select * from comment
+        WHERE  user_id=#{userId};
+    </select>
+</mapper>

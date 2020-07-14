@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.resourcemapper.ResourceMapper">
+    <resultMap id="resourceMap" type="com.framework.entity.Resource">
+        <id column="resource_id" property="resourceId"/>
+        <result column="resource_name" property="resourceName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="res_category_id" property="resCategoryId"/>
+        <result column="its_free" property="itsFree"/>
+        <result column="points" property="points"/>
+        <result column="content" property="content"/>
+        <result column="download" property="download"/>
+        <result column="pass_word" property="passWord"/>
+        <result column="its_hot" property="itsHot"/>
+        <result column="state" property="state"/>
+        <result column="reason" property="reason"/>
+        <result column="check_date" property="checkDate"/>
+        <result column="click" property="click"/>
+        <result column="keyword" property="keyword"/>
+        <result column="desc" property="desc"/>
+        <result column="its_useful" property="itsUseful"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="user_name" property="userName"/>
+        <result column="avatar" property="avatar"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="cover" property="cover"/>
+    </resultMap>
+    <select id="list" resultMap="resourceMap">
+        SELECT
+        r.resource_id,
+        r.cover,
+        r.resource_name,
+        r.reason,
+        r.content,
+        r.keyword,
+        r.points,
+        r.create_time,
+        r.state,
+        r.click,
+        r.res_category_id,
+        r.user_id,
+        r.its_free,
+        r.its_hot,
+        rc.category_name,
+        u.user_name
+        FROM
+        resource r,
+        res_category rc,
+        `user` u
+        WHERE
+        r.res_category_id=rc.res_category_id
+        AND
+        r.user_id=u.user_id
+
+        <if test="userId!='' and userId!=null">
+            AND u.user_id=#{userId}
+        </if>
+        <if test="keyWord!=null and keyWord!=''">
+            AND r.resource_name LIKE #{keyWord}
+        </if>
+        <if test="categoryId!='' and categoryId!=null ">
+            AND r.res_category_id=#{categoryId}
+        </if>
+        <if test="state!='' and state!=null">
+            AND
+            r.state=#{state}
+        </if>
+        ORDER BY
+        r.res_category_id
+    </select>
+    <!--根据id查询单个-->
+    <select id="findById" resultMap="resourceMap">
+        SELECT
+        r.*,
+        rc.category_name,
+        u.user_name,
+        u.avatar
+        FROM
+        resource r,
+        res_category rc,
+        user u
+        WHERE
+        resource_id=#{resourceId}
+
+        AND
+        r.res_category_id=rc.res_category_id
+        AND
+        r.user_id=u.user_id
+
+
+    </select>
+    <!--插入帖子-->
+    <insert id="insert">
+        INSERT INTO resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resourceName!=null">resource_name,</if>
+            <if test="createTime!=null">create_time,</if>
+            <if test="userId!=null">user_id,</if>
+            <if test="resCategoryId!=null">res_category_id,</if>
+            <if test="itsFree!=null">its_free,</if>
+            <if test="points!=null">points,</if>
+            <if test="content!=null">content,</if>
+            <if test="download!=null">download,</if>
+            <if test="passWord!=null">pass_word,</if>
+            <if test="itsHot!=null">its_hot,</if>
+            <if test="state!=null">state,</if>
+            <if test="reason!=null">reason,</if>
+            <if test="checkDate!=null">check_date,</if>
+            <if test="click!=null">click,</if>
+            <if test="keyword!=null">keyword,</if>
+            <if test="cover!=null">cover,</if>
+            <if test="desc!=null">desc,</if>
+            <if test="itsUseful!=null">its_useful,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resourceName!=null">#{resourceName},</if>
+            <if test="createTime!=null">#{createTime},</if>
+            <if test="userId!=null">#{userId},</if>
+            <if test="resCategoryId!=null">#{resCategoryId},</if>
+            <if test="itsFree!=null">#{itsFree},</if>
+            <if test="points!=null">#{points},</if>
+            <if test="content!=null">#{content},</if>
+            <if test="download!=null">#{download},</if>
+            <if test="passWord!=null">#{passWord},</if>
+            <if test="itsHot!=null">#{itsHot},</if>
+            <if test="state!=null">#{state},</if>
+            <if test="reason!=null">#{reason},</if>
+            <if test="checkDate!=null">#{checkDate},</if>
+            <if test="click!=null">#{click},</if>
+            <if test="keyword!=null">#{keyword},</if>
+            <if test="cover!=null">#{cover},</if>
+            <if test="desc!=null">#{desc},</if>
+            <if test="itsUseful!=null">#{itsUseful},</if>
+        </trim>
+    </insert>
+    <!--根据id更新-->
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE `resource`
+        <set>
+            <if test="resourceName!=null">resource_name=#{resourceName},</if>
+            <if test="createTime!=null">create_time=#{createTime},</if>
+            <if test="userId!=null">user_id=#{userId},</if>
+            <if test="resCategoryId!=null">res_category_id=#{resCategoryId},</if>
+            <if test="itsFree!=null">its_free=#{itsFree},</if>
+            <if test="points!=null">points=#{points},</if>
+            <if test="content!=null">content=#{content},</if>
+            <if test="download!=null">download=#{download},</if>
+            <if test="passWord!=null">pass_word=#{passWord},</if>
+            <if test="itsHot!=null">its_hot=#{itsHot},</if>
+            <if test="state!=null">state=#{state},</if>
+            <if test="reason!=null">reason=#{reason},</if>
+            <if test="checkDate!=null">check_date=#{checkDate},</if>
+            <if test="click!=null">click=#{click},</if>
+            <if test="keyword!=null">keyword=#{keyword},</if>
+            <if test="cover!=null">cover=#{cover},</if>
+            <if test="desc!=null and desc!=''">`desc`=#{desc},</if>
+            <if test="itsUseful!=null">its_useful=#{itsUseful},</if>
+        </set>
+        WHERE resource_id = #{resourceId}
+    </update>
+    <!--删除帖子-->
+    <delete id="delete">
+        DELETE FROM resource WHERE resource_id IN
+        <foreach collection="idArray" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+
+    </delete>
+    <!--今日新增帖子数-->
+    <select id="todayNewAddResourceCount" resultType="int">
+        SELECT COUNT(*)
+        FROM
+        resource
+        WHERE
+        TO_DAYS(create_time)=TO_DAYS(now())
+    </select>
+    <!--待审核帖子数-->
+    <select id="notJudgeResourceCount" resultType="int">
+        SELECT count(*)
+        FROM
+        resource
+        WHERE
+        state=0
+    </select>
+    <update id="setHot">
+        UPDATE resource SET its_hot=1
+        WHERE
+        resource_id=#{resourceId}
+    </update>
+
+    <update id="setNotHot">
+        UPDATE resource SET its_hot=0
+        WHERE
+        resource_id=#{resourceId}
+    </update>
+    <update id="setFree">
+        UPDATE resource SET its_free=1,points=0
+        WHERE
+        resource_id=#{resourceId}
+    </update>
+
+    <update id="setNotFree">
+        UPDATE resource SET its_free=0,points=3
+        WHERE
+        resource_id=#{resourceId}
+    </update>
+
+    <select id="getCountByCategoryId" resultType="int">
+        select count(*)
+        FROM
+        resource
+        WHERE
+        res_category_id
+        IN
+        <foreach collection="idArr" item="item" close=")" separator="," open="(">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <!--根据时间查询最新的主题-->
+    <select id="lastList" resultMap="resourceMap">
+        SELECT
+        r.resource_id,
+        r.cover,
+        r.resource_name,
+        r.reason,
+        r.content,
+        r.keyword,
+        r.points,
+        r.create_time,
+        r.state,
+        r.click,
+        r.res_category_id,
+        r.user_id,
+        r.its_free,
+        r.its_hot,
+        rc.category_name,
+        u.user_name
+        FROM
+        resource r,
+        res_category rc,
+        `user` u
+        WHERE
+        r.res_category_id=rc.res_category_id
+        AND
+        r.user_id=u.user_id
+
+        <if test="userId!='' and userId!=null">
+            AND u.user_id=#{userId}
+        </if>
+        <if test="keyword!=null and keyword!=''">
+            AND r.resource_name LIKE #{keyword}
+        </if>
+        <if test="categoryId!='' and categoryId!=null ">
+            AND r.res_category_id=#{categoryId}
+        </if>
+        <if test="state!='' and state!=null">
+            AND
+            r.state=#{state}
+        </if>
+
+        ORDER BY
+        r.create_time
+        DESC
+
+        limit
+        10
+    </select>
+    <select id="listByClick" resultMap="resourceMap">
+        SELECT
+        r.resource_name,
+        r.resource_id,
+        r.cover,
+        r.user_id,
+        u.user_id,
+        u.user_name
+        FROM
+        resource r,
+        `user` u
+        WHERE
+        r.state=1
+        AND
+        r.user_id=u.user_id
+        ORDER BY
+        click
+        DESC
+        limit
+        10
+    </select>
+
+    <select id="listByCommentTimeDesc" resultMap="resourceMap">
+        SELECT
+r.cover,
+r.resource_name,
+r.create_time,
+c.resource_id,
+c.content,
+c.comment_time
+FROM
+resource r,
+`comment` c
+
+WHERE
+r.resource_id=c.resource_id
+
+ORDER BY
+
+c.comment_time
+desc
+
+limit
+10
+    </select>
+
+    <!--查询浏览量-->
+    <select id="getViewCount" resultType="int">
+        SELECT
+        click
+        FROM
+        resource
+        WHERE
+        resource_id=#{resourceId}
+    </select>
+</mapper>

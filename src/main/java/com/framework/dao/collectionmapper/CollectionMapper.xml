@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.collectionmapper.CollectionMapper">
+    <resultMap id="collectionMap" type="com.framework.entity.Collection">
+        <id column="collection_id" property="collectionId"/>
+        <result column="resource_id" property="resourceId"/>
+        <result column="user_id" property="userId"/>
+        <result column="collection_time" property="collectionTime"/>
+
+        <!--非本表字段-->
+        <result column="resource_name" property="resourceName"/>
+    </resultMap>
+    <!--查询某个帖子的收藏总数-->
+<select id="collectionCount" resultType="int">
+    select count(*) from collection where resource_id=#{resourceId}
+</select>
+    <select id="isAlreadyCollect" resultType="int">
+        select count(*) from
+        collection
+        where
+        user_id=#{userId}
+        and
+        resource_id=#{resourceId}
+    </select>
+    <!-- 插入 -->
+    <insert id="insert">
+        INSERT INTO collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId!=null">user_id,</if>
+            <if test="resourceId!=null">resource_id,</if>
+            <if test="collectionTime!=null">collection_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId!=null">#{userId},</if>
+            <if test="resourceId!=null">#{resourceId},</if>
+            <if test="collectionTime!=null">#{collectionTime},</if>
+        </trim>
+    </insert>
+    <select id="findList" resultMap="collectionMap">
+        select
+        c.*,
+        r.resource_name
+        from
+        collection c,
+        resource r
+        where
+        c.user_id=#{userId}
+        and
+        c.resource_id=r.resource_id
+    </select>
+
+
+    <delete id="deleteByUserIdAndResId">
+        delete
+        from
+        collection
+        where
+        user_id=#{userId}
+        and
+        collection.collection_id
+        IN
+        <foreach collection="idArr" item="item" close=")" separator="," open="(">
+            #{item}
+        </foreach>
+    </delete>
+    </mapper>

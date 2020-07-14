@@ -1,0 +1,85 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.framework.dao.messagemapper.MessageMapper">
+    <resultMap id="messageMap" type="com.framework.entity.Message">
+        <id column="message_id" property="messageId"/>
+        <result column="message_title" property="messageTitle"/>
+        <result column="message_content" property="messageContent"/>
+        <result column="user_id" property="userId"/>
+        <result column="its_already" property="itsAlready"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    <select id="findListByUserId" resultMap="messageMap">
+        SELECT * FROM
+        message
+        WHERE
+        user_id=#{userId}
+        ORDER
+        BY
+        create_time
+        DESC
+    </select>
+    <!--获取未读的消息-->
+    <select id="findMessageNotRead" resultMap="messageMap">
+        SELECT
+        *
+        FROM
+        message
+        WHERE
+        user_id=#{userId}
+        AND
+        its_already=0
+        ORDER BY
+        create_time
+        DESC
+    </select>
+    <!--消息新增-->
+    <insert id="insert">
+        INSERT INTO message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="messageTitle!=null">message_title,</if>
+            <if test="messageContent!=null">message_content,</if>
+            <if test="userId!=null">user_id,</if>
+            <if test="createTime!=null">create_time,</if>
+            <if test="itsAlready!=null">its_already,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="messageTitle!=null">#{messageTitle},</if>
+            <if test="messageContent!=null">#{messageContent},</if>
+            <if test="userId!=null">#{userId},</if>
+            <if test="createTime!=null">#{createTime},</if>
+            <if test="itsAlready!=null">#{itsAlready},</if>
+        </trim>
+    </insert>
+
+    <select id="getCountByUserId" resultType="int">
+        SELECT count(*)
+        FROM
+        `message`
+        WHERE
+        user_id=#{userId}
+        AND
+        its_already=0
+    </select>
+
+    <update id="setToAlreadyRead">
+        UPDATE
+        message
+        SET
+        its_already=1
+        WHERE
+        message_id=#{messageId}
+    </update>
+    <delete id="delete">
+        DELETE
+        FROM
+        message
+        WHERE
+        message_id
+        IN
+        <foreach collection="idArr" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>
