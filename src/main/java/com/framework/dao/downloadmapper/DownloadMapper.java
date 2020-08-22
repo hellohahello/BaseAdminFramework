@@ -19,4 +19,6 @@ public interface DownloadMapper {
      * @param idArray
      */
     void deleteByForeignKey(@Param("idArray") String[] idArray);
+
+    int number();
 }

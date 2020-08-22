@@ -48,4 +48,8 @@
             #{item}
         </foreach>
     </delete>
+
+    <select id="number" resultType="Integer">
+        SELECT 6
+    </select>
 </mapper>

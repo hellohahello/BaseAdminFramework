@@ -1,6 +1,5 @@
 package com.framework.entity;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,7 +19,7 @@ public class Message implements Serializable{
     private Integer userId;
 //    创建时间
     private Date createTime;
-    @Transient
+//    @Transient
     private String createTimeStr;
 //    是否已读，默认未读
     private boolean itsAlready=false;

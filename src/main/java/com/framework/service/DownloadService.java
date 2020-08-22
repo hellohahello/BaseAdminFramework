@@ -16,7 +16,7 @@ import java.util.Date;
 public class DownloadService {
 @Autowired
     protected DownloadMapper downloadMapper;
-
+//   private int num=downloadMapper.number();
     /**
      * 判断是否下载过
      * @param userId
@@ -51,4 +51,8 @@ public class DownloadService {
     public void deleteByForeignKey(String[] idArray) {
             downloadMapper.deleteByForeignKey(idArray);
     }
+
+public int num(){
+        return downloadMapper.number();
+}
 }
